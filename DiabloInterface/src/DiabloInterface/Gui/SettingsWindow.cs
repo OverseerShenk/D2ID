@@ -41,6 +41,9 @@ namespace DiabloInterface.Gui
                     || settings.DisplayRunesHighContrast != chkHighContrastRunes.Checked
                     || settings.AutosplitHotkey != autoSplitHotkeyControl.Hotkey
                     || settings.DisplayDifficultyPercentages != chkDisplayDifficultyPercents.Checked
+                    || settings.TcpEnabled != TcpCheckBox.Checked
+                    || settings.TcpHost != TcpHostBox.Text
+                    || settings.TcpApiKey != TcpApiKeyBox.Text
                 ;
             }
         }
@@ -112,6 +115,9 @@ namespace DiabloInterface.Gui
             chkRuneDisplayRunesHorizontal.Checked = settings.DisplayRunesHorizontal;
             chkDisplayDifficultyPercents.Checked = settings.DisplayDifficultyPercentages;
             chkHighContrastRunes.Checked = settings.DisplayRunesHighContrast;
+            TcpCheckBox.Checked = settings.TcpEnabled;
+            TcpHostBox.Text = settings.TcpHost;
+            TcpApiKeyBox.Text = settings.TcpApiKey;
 
             // Show the selected diablo version.
             int versionIndex = this.VersionComboBox.FindString(settings.D2Version);
@@ -199,6 +205,9 @@ namespace DiabloInterface.Gui
             settings.DisplayRunesHorizontal = chkRuneDisplayRunesHorizontal.Checked;
             settings.DisplayRunesHighContrast = chkHighContrastRunes.Checked;
 
+            settings.TcpEnabled = TcpCheckBox.Checked;
+            settings.TcpHost = TcpHostBox.Text;
+            settings.TcpApiKey = TcpApiKeyBox.Text;
         }
 
         private void AddAutoSplitButton_Clicked(object sender, EventArgs e)
@@ -393,6 +402,11 @@ namespace DiabloInterface.Gui
         {
             SaveSettings();
             Close();
+        }
+
+        private void FontLabel_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

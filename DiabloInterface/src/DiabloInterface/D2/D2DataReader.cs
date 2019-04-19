@@ -240,6 +240,7 @@ namespace DiabloInterface
             // Update UI.
             main.UpdateLabels(character, itemClassMap);
             main.writeFiles(character);
+            main.TcpStream(character);
 
 #if DEBUG
             Console.WriteLine("Normal:    " + character.CompletedQuestCounts[0] + "/" + D2QuestHelper.Quests.Count + " (" + (character.CompletedQuestCounts[0] * 100.0f / D2QuestHelper.Quests.Count) + "%)" );
@@ -272,6 +273,12 @@ namespace DiabloInterface
             Character character = null;
             if (characters.TryGetValue(playerName, out character))
             {
+                // Reset playing time when re-entering game
+                if (wasInTitleScreen)
+                {
+                    characters[playerName].LastParseTime = null;
+                }
+
                 // We were just in the title screen and came back to a new character.
                 bool ResetOnBeginning = wasInTitleScreen && experience == 0;
 
@@ -294,6 +301,7 @@ namespace DiabloInterface
             {
                 character = new Character();
                 character.name = playerName;
+                character.Time = main.GetCharacterTime(playerName);
                 characters[playerName] = character;
 
                 // A brand new character has been started.
@@ -301,6 +309,7 @@ namespace DiabloInterface
                 {
                     Logger.Instance.WriteLine("Enabled autosplits for character: {0}", character.name);
 
+                    character.Time = 0;
                     activeCharacter = character;
                     main.Reset();
                 }

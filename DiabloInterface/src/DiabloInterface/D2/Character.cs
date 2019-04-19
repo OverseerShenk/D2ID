@@ -9,7 +9,7 @@ namespace DiabloInterface
         const int MIN_RESIST = -100;
         const int BASE_MAX_RESIST = 75;
 
-        public string name;
+        public string name { get; set; }
 
         public D2Data.Mode Mode { get; private set; }
 
@@ -22,6 +22,11 @@ namespace DiabloInterface
         public int Dexterity { get; private set; }
         public int Vitality { get; private set; }
         public int Energy { get; private set; }
+
+        public int Hitpoints { get; private set; }
+        public int HitpointsMax { get; private set; }
+        public int Mana { get; private set; }
+        public int ManaMax { get; private set; }
 
         public int FireResist { get; private set; }
         public int ColdResist { get; private set; }
@@ -38,10 +43,13 @@ namespace DiabloInterface
 
         public int[] CompletedQuestCounts { get; set; } = new int[3] { 0, 0, 0 };
 
-        public short Deaths;
+        public short Deaths { get; set; }
 
         public int Defense { get; private set; }
 
+        public DateTime? LastParseTime = null;
+        public double Time { get; set; }
+        
         /// <summary>
         /// fill the player data by dictionary
         /// </summary>
@@ -74,6 +82,11 @@ namespace DiabloInterface
             Vitality = getStat(StatIdentifier.Vitality);
             Energy = getStat(StatIdentifier.Energy);
 
+            Hitpoints = getStat(StatIdentifier.Hitpoints) >> 8;
+            HitpointsMax = getStat(StatIdentifier.HitpointsMax) >> 8;
+            Mana = getStat(StatIdentifier.Mana) >> 8;
+            ManaMax = getStat(StatIdentifier.ManaMax) >> 8;
+
             Defense = getStat(StatIdentifier.Defense);
 
             int maxFire = BASE_MAX_RESIST + getStat(StatIdentifier.ResistFireMax);
@@ -93,6 +106,16 @@ namespace DiabloInterface
 
             Gold = getStat(StatIdentifier.Gold);
             GoldStash = getStat(StatIdentifier.GoldStash);
+
+            // Increase play time
+            DateTime currentTime = DateTime.Now;
+
+            if (LastParseTime != null)
+            {
+                Time += (currentTime - (DateTime) LastParseTime).TotalMilliseconds;
+            }
+
+            LastParseTime = currentTime;
         }
 
         static T Clamp<T>(T value, T min, T max) where T : IComparable<T>

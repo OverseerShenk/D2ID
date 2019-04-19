@@ -80,6 +80,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TcpStreamClient.cs" />
     <Compile Include="AutoSplit.cs" />
     <Compile Include="AutoSplitFactory.cs" />
     <Compile Include="D2\D2QuestHelper.cs" />

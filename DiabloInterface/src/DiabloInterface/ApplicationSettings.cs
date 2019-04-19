@@ -7,7 +7,7 @@ namespace DiabloInterface
     {
         public string FileFolder { get; set; } = "Files";
         public string FontName { get; set; } = "Courier New";
-        public string D2Version { get; set; }
+        public string D2Version { get; set; } = "";
         public int FontSize { get; set; } = 10;
         public int FontSizeTitle { get; set; } = 18;
         public bool CreateFiles { get; set; }
@@ -27,5 +27,8 @@ namespace DiabloInterface
         public bool DisplayRunesHighContrast { get; set; } = false;
         public bool DisplayAdvancedStats { get; set; }
         public bool DisplayDifficultyPercentages { get; set; } = false;
+        public bool TcpEnabled { get; set; } = true;
+        public string TcpHost { get; set; } = "ws://localhost:3000";
+        public string TcpApiKey { get; set; } = "";
     }
 }
