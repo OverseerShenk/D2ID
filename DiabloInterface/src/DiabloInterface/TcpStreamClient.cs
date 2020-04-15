@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Net;
 
 public class TcpStreamClient
 {
@@ -73,6 +74,13 @@ public class TcpStreamClient
         { "ias", new SyncableProperty<int>("IncreasedAttackSpeed") }
     };
 
+    public TcpStreamClient(string host, string apiKey)
+    {
+        this.host = host;
+        this.apiKey = apiKey;
+        ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
+    }
+
     async private Task PostJson(string json)
     {
 #if DEBUG
@@ -100,8 +108,13 @@ public class TcpStreamClient
 
             retry = false;
         }
-        catch (HttpRequestException)
+        catch (HttpRequestException e)
         {
+#if DEBUG
+
+            Console.WriteLine(e.Message);
+            Console.WriteLine(e.InnerException.Message);
+#endif
             status = "lost";
             retry = true;
         }
@@ -109,12 +122,6 @@ public class TcpStreamClient
         {
             sending = false;
         }
-    }
-
-    public TcpStreamClient(string host, string apiKey)
-    {
-        this.host = host;
-        this.apiKey = apiKey;
     }
 
     async public Task Send(Character character)
