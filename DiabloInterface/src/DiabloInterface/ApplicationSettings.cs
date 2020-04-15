@@ -28,7 +28,7 @@ namespace DiabloInterface
         public bool DisplayAdvancedStats { get; set; }
         public bool DisplayDifficultyPercentages { get; set; } = false;
         public bool TcpEnabled { get; set; } = true;
-        public string TcpHost { get; set; } = "ws://localhost:3000";
+        public string TcpHost { get; set; } = "https://fbi8ev5l21.execute-api.eu-central-1.amazonaws.com/default/d2id-update";
         public string TcpApiKey { get; set; } = "";
     }
 }

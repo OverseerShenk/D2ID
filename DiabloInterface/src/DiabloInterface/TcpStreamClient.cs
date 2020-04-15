@@ -1,22 +1,21 @@
 ﻿using DiabloInterface;
-using DiabloInterface.Properties;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Net.Sockets;
-using System.Net.WebSockets;
 using System.Reflection;
-using System.Threading;
 using Newtonsoft.Json;
 using System.Text;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 public class TcpStreamClient
 {
-    private ClientWebSocket client;
-    private BinaryWriter writer;
-    private bool connected;
+    private static readonly HttpClient client = new HttpClient();
     private string host;
     private string apiKey;
+    private string status = "connecting";
+    private bool sending = false;
+    private bool retry = false;
+    private string lastJson;
 
     private interface Syncable
     {
@@ -51,7 +50,6 @@ public class TcpStreamClient
     }
 
     private Dictionary<string, Syncable> syncableProperties = new Dictionary<string, Syncable>() {
-        { "name", new SyncableProperty<string>("name") },
         { "level", new SyncableProperty<int>("Level") },
         { "experience", new SyncableProperty<int>("Experience") },
         { "strength", new SyncableProperty<int>("Strength") },
@@ -74,39 +72,59 @@ public class TcpStreamClient
         { "fhr", new SyncableProperty<int>("FasterHitRecovery") },
         { "ias", new SyncableProperty<int>("IncreasedAttackSpeed") }
     };
-    
+
+    async private Task PostJson(string json)
+    {
+#if DEBUG
+        Console.WriteLine(json);
+#endif
+
+        try
+        {
+            sending = true;
+            var response = await client.PostAsync(host, new StringContent(json, Encoding.UTF8, "application/json"));
+            var content = await response.Content.ReadAsStringAsync();
+
+#if DEBUG
+            Console.WriteLine(content);
+#endif
+
+            if (response.IsSuccessStatusCode)
+            {
+                status = "ok";
+            }
+            else
+            {
+                status = "invalid";
+            }
+
+            retry = false;
+        }
+        catch (HttpRequestException)
+        {
+            status = "lost";
+            retry = true;
+        }
+        finally
+        {
+            sending = false;
+        }
+    }
+
     public TcpStreamClient(string host, string apiKey)
     {
         this.host = host;
         this.apiKey = apiKey;
-        
-        Connect();
     }
 
-    async public void Connect()
+    async public Task Send(Character character)
     {
-        try
+        // Prevent accumulating queries
+        if (sending)
         {
-            client = new ClientWebSocket();
-            await client.ConnectAsync(new Uri(host), CancellationToken.None);
-            connected = true;
-
-            ArraySegment<byte> segment = new ArraySegment<byte>(Encoding.UTF8.GetBytes("{\"apiKey\": \"" + apiKey + "\"}"));
-            await client.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
-
-            //byte[] bytes = new byte[1024];
-            //int bytesRead = ns.Read(bytes, 0, bytes.Length);
-            //Console.WriteLine(Encoding.ASCII.GetString(bytes, 0, bytesRead));
+            return;
         }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.ToString());
-            connected = false;
-        }
-    }
 
-    public void Send(Character character)
-    {
         List<string> json = new List<string>();
 
         foreach (KeyValuePair<string, Syncable> stat in syncableProperties)
@@ -119,25 +137,20 @@ public class TcpStreamClient
 
         if (json.Count > 0)
         {
-            json.Add("\"t\": " + character.Time.ToString());
+            json.Add("\"apiKey\": \"" + apiKey + "\"");
+            json.Add("\"name\": \"" + character.name + "\"");
+            json.Add("\"playtime\": " + ((int) (character.Time / 1000)).ToString());
 
-            try
-            {
-                ArraySegment<byte> segment = new ArraySegment<byte>(Encoding.UTF8.GetBytes("{" + String.Join(", ", json.ToArray()) + "}"));
-                client.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
-            }
-            catch (Exception e)
-            {
-                Connect();
-            }
+            lastJson = "{" + string.Join(", ", json.ToArray()) + "}";
+            await PostJson(lastJson);
+        } else if (retry)
+        {
+            await PostJson(lastJson);
         }
     }
 
-    public void Close()
+    public string GetStatus()
     {
-        if (connected)
-        {
-            client.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
-        }
+        return status;
     }
 }

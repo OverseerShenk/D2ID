@@ -705,7 +705,7 @@
             this.groupBox2.Size = new System.Drawing.Size(231, 95);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "TCP Server";
+            this.groupBox2.Text = "Server";
             // 
             // TcpApiKeyBox
             // 
@@ -714,6 +714,7 @@
             this.TcpApiKeyBox.Size = new System.Drawing.Size(117, 20);
             this.TcpApiKeyBox.TabIndex = 7;
             this.TcpApiKeyBox.UseSystemPasswordChar = true;
+            this.TcpApiKeyBox.TextChanged += new System.EventHandler(this.TcpApiKeyBox_TextChanged);
             // 
             // TcpCheckBox
             // 
@@ -739,9 +740,10 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(7, 45);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(32, 13);
+            this.label1.Size = new System.Drawing.Size(52, 13);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Host:";
+            this.label1.Text = "Endpoint:";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // TcpHostBox
             // 

@@ -132,7 +132,7 @@ namespace DiabloInterface
         {
             while (!disposed)
             {
-                Thread.Sleep(500);
+                Thread.Sleep(1000);
 
                 // Block here until we have a valid reader.
                 if (!checkIfD2Running())
@@ -243,9 +243,9 @@ namespace DiabloInterface
             main.TcpStream(character);
 
 #if DEBUG
-            Console.WriteLine("Normal:    " + character.CompletedQuestCounts[0] + "/" + D2QuestHelper.Quests.Count + " (" + (character.CompletedQuestCounts[0] * 100.0f / D2QuestHelper.Quests.Count) + "%)" );
-            Console.WriteLine("Nightmare: " + character.CompletedQuestCounts[1] + "/" + D2QuestHelper.Quests.Count + " (" + (character.CompletedQuestCounts[1] * 100.0f / D2QuestHelper.Quests.Count) + "%)");
-            Console.WriteLine("Hell:      " + character.CompletedQuestCounts[2] + "/" + D2QuestHelper.Quests.Count + " (" + (character.CompletedQuestCounts[2] * 100.0f / D2QuestHelper.Quests.Count) + "%)");
+            // Console.WriteLine("Normal:    " + character.CompletedQuestCounts[0] + "/" + D2QuestHelper.Quests.Count + " (" + (character.CompletedQuestCounts[0] * 100.0f / D2QuestHelper.Quests.Count) + "%)" );
+            // Console.WriteLine("Nightmare: " + character.CompletedQuestCounts[1] + "/" + D2QuestHelper.Quests.Count + " (" + (character.CompletedQuestCounts[1] * 100.0f / D2QuestHelper.Quests.Count) + "%)");
+            // Console.WriteLine("Hell:      " + character.CompletedQuestCounts[2] + "/" + D2QuestHelper.Quests.Count + " (" + (character.CompletedQuestCounts[2] * 100.0f / D2QuestHelper.Quests.Count) + "%)");
 #endif
 
             // Update autosplits only if enabled and the character was a freshly started character.

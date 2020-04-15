@@ -134,11 +134,6 @@ namespace DiabloInterface.Gui
                 dataReader.Dispose();
                 dataReader = null;
             }
-
-            if (tcpStreamClient != null)
-            {
-                tcpStreamClient.Close();
-            }
         }
 
         public DebugWindow getDebugWindow()
@@ -289,7 +284,14 @@ namespace DiabloInterface.Gui
                 return;
             }
 
-            nameLabel.Text = player.name;
+            if (Settings.TcpEnabled)
+            {
+                nameLabel.Text = player.name + "(" + tcpStreamClient.GetStatus() + ")";
+            } else
+            {
+                nameLabel.Text = player.name;
+            }
+
             lvlLabel.Text = "LVL: " + player.Level;
             goldLabel.Text = "GOLD: " + (player.Gold + player.GoldStash);
             deathsLabel.Text = "DEATHS: " + player.Deaths;
@@ -444,11 +446,6 @@ namespace DiabloInterface.Gui
 
         void ApplyTcpSettings()
         {
-            if (tcpStreamClient != null)
-            {
-                tcpStreamClient.Close();
-            }
-
             if (Settings.TcpEnabled)
             {
                 tcpStreamClient = new TcpStreamClient(Settings.TcpHost, Settings.TcpApiKey);
@@ -713,6 +710,11 @@ namespace DiabloInterface.Gui
         }
 
         private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void nameLabel_Click(object sender, EventArgs e)
         {
 
         }

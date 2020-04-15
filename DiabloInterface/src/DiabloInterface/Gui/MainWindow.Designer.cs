@@ -120,6 +120,7 @@
             this.nameLabel.Size = new System.Drawing.Size(68, 27);
             this.nameLabel.TabIndex = 6;
             this.nameLabel.Text = "Name";
+            this.nameLabel.Click += new System.EventHandler(this.nameLabel_Click);
             // 
             // strLabel
             // 
